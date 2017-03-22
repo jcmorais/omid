@@ -25,22 +25,8 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimaps;
 
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.hbase.Cell;
-import org.apache.hadoop.hbase.CellUtil;
-import org.apache.hadoop.hbase.HBaseConfiguration;
-import org.apache.hadoop.hbase.HConstants;
-import org.apache.hadoop.hbase.HTableDescriptor;
-import org.apache.hadoop.hbase.KeyValue;
-import org.apache.hadoop.hbase.KeyValueUtil;
-import org.apache.hadoop.hbase.client.Delete;
-import org.apache.hadoop.hbase.client.Get;
-import org.apache.hadoop.hbase.client.HTable;
-import org.apache.hadoop.hbase.client.HTableInterface;
-import org.apache.hadoop.hbase.client.Mutation;
-import org.apache.hadoop.hbase.client.Put;
-import org.apache.hadoop.hbase.client.Result;
-import org.apache.hadoop.hbase.client.ResultScanner;
-import org.apache.hadoop.hbase.client.Scan;
+import org.apache.hadoop.hbase.*;
+import org.apache.hadoop.hbase.client.*;
 import org.apache.hadoop.hbase.io.TimeRange;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.omid.committable.CommitTable.CommitTimestamp;
@@ -69,34 +55,44 @@ public class TTable implements Closeable {
 
     private static Logger LOG = LoggerFactory.getLogger(TTable.class);
 
-    private final HTableInterface healerTable;
+    private final Table healerTable;
 
-    private HTableInterface table;
+    private Table table;
 
     // ----------------------------------------------------------------------------------------------------------------
     // Construction
     // ----------------------------------------------------------------------------------------------------------------
 
+    /*
     public TTable(Configuration conf, byte[] tableName) throws IOException {
         this(new HTable(conf, tableName));
-    }
+    }*/
 
-    public TTable(String tableName) throws IOException {
-        this(HBaseConfiguration.create(), Bytes.toBytes(tableName));
+
+    public TTable(Connection connection, TableName tableName) throws IOException {
+        this(connection.getTable(tableName));
     }
 
     public TTable(Configuration conf, String tableName) throws IOException {
-        this(conf, Bytes.toBytes(tableName));
+        this(ConnectionFactory.createConnection(conf), TableName.valueOf(tableName));
     }
 
-    public TTable(HTableInterface hTable) throws IOException {
-        table = hTable;
-        healerTable = new HTable(table.getConfiguration(), table.getTableName());
+    public TTable(String tableName) throws IOException {
+        this(HBaseConfiguration.create(), tableName);
     }
 
-    public TTable(HTableInterface hTable, HTableInterface healerTable) throws IOException {
-        table = hTable;
-        this.healerTable = healerTable;
+
+
+
+    public TTable(Table table) throws IOException {
+        this.table = table;
+        Connection connection = ConnectionFactory.createConnection(table.getConfiguration());
+        healerTable = connection.getTable(table.getName());
+    }
+
+    public TTable(Table table, Table hTable) throws IOException {
+        this.table = table;
+        this.healerTable = hTable;
     }
 
     // ----------------------------------------------------------------------------------------------------------------
@@ -588,7 +584,7 @@ public class TTable implements Closeable {
      * @return array of byte
      */
     public byte[] getTableName() {
-        return table.getTableName();
+        return table.getName().getName();
     }
 
     /**
@@ -717,7 +713,7 @@ public class TTable implements Closeable {
      *
      * @return The underlying HTable object
      */
-    public HTableInterface getHTable() {
+    public Table getHTable() {
         return table;
     }
 
@@ -725,14 +721,15 @@ public class TTable implements Closeable {
      * Delegates to {@link HTable#setAutoFlush(boolean autoFlush)}
      */
     public void setAutoFlush(boolean autoFlush) {
-        table.setAutoFlush(autoFlush, true);
+        //table.setAutoFlush(autoFlush, true);
     }
 
     /**
      * Delegates to {@link HTable#isAutoFlush()}
      */
     public boolean isAutoFlush() {
-        return table.isAutoFlush();
+        return false;
+        //return table.isAutoFlush();
     }
 
     /**
@@ -753,7 +750,7 @@ public class TTable implements Closeable {
      * Delegates to see HTable.flushCommits()
      */
     public void flushCommits() throws IOException {
-        table.flushCommits();
+        //table.flushCommits();
     }
 
     // ----------------------------------------------------------------------------------------------------------------

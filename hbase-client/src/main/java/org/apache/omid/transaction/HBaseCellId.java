@@ -18,6 +18,8 @@
 package org.apache.omid.transaction;
 
 import com.google.common.hash.Hashing;
+import javafx.scene.control.Tab;
+import org.apache.hadoop.hbase.client.Table;
 import org.apache.omid.tso.client.CellId;
 import org.apache.hadoop.hbase.client.HTableInterface;
 
@@ -25,13 +27,13 @@ import static com.google.common.base.Charsets.UTF_8;
 
 public class HBaseCellId implements CellId {
 
-    private final HTableInterface table;
+    private final Table table;
     private final byte[] row;
     private final byte[] family;
     private final byte[] qualifier;
     private long timestamp;
 
-    public HBaseCellId(HTableInterface table, byte[] row, byte[] family, byte[] qualifier, long timestamp) {
+    public HBaseCellId(Table table, byte[] row, byte[] family, byte[] qualifier, long timestamp) {
         this.timestamp = timestamp;
         this.table = table;
         this.row = row;
@@ -39,7 +41,7 @@ public class HBaseCellId implements CellId {
         this.qualifier = qualifier;
     }
 
-    public HTableInterface getTable() {
+    public Table getTable() {
         return table;
     }
 
@@ -60,7 +62,7 @@ public class HBaseCellId implements CellId {
     }
 
     public String toString() {
-        return new String(table.getTableName(), UTF_8)
+        return new String(table.getName().getName(), UTF_8)
                 + ":" + new String(row, UTF_8)
                 + ":" + new String(family, UTF_8)
                 + ":" + new String(qualifier, UTF_8)
@@ -70,7 +72,7 @@ public class HBaseCellId implements CellId {
     @Override
     public long getCellId() {
         return Hashing.murmur3_128().newHasher()
-                .putBytes(table.getTableName())
+                .putBytes(table.getName().getName())
                 .putBytes(row)
                 .putBytes(family)
                 .putBytes(qualifier)

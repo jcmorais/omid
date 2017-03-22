@@ -19,6 +19,7 @@ package org.apache.omid.transaction;
 
 import org.apache.hadoop.hbase.client.Delete;
 import org.apache.hadoop.hbase.client.HTableInterface;
+import org.apache.hadoop.hbase.client.Table;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +39,7 @@ public class HBaseTransaction extends AbstractTransaction<HBaseCellId> {
         Set<HBaseCellId> writeSet = getWriteSet();
         for (final HBaseCellId cell : writeSet) {
             Delete delete = new Delete(cell.getRow());
-            delete.deleteColumn(cell.getFamily(), cell.getQualifier(), getStartTimestamp());
+            delete.addColumn(cell.getFamily(), cell.getQualifier(), getStartTimestamp());
             try {
                 cell.getTable().delete(delete);
             } catch (IOException e) {
@@ -58,8 +59,8 @@ public class HBaseTransaction extends AbstractTransaction<HBaseCellId> {
      */
     public void flushTables() throws IOException {
 
-        for (HTableInterface writtenTable : getWrittenTables()) {
-            writtenTable.flushCommits();
+        for (Table writtenTable : getWrittenTables()) {
+            //writtenTable.flushCommits();
         }
 
     }
@@ -68,9 +69,9 @@ public class HBaseTransaction extends AbstractTransaction<HBaseCellId> {
     // Helper methods
     // ****************************************************************************************************************
 
-    private Set<HTableInterface> getWrittenTables() {
+    private Set<Table> getWrittenTables() {
         HashSet<HBaseCellId> writeSet = (HashSet<HBaseCellId>) getWriteSet();
-        Set<HTableInterface> tables = new HashSet<HTableInterface>();
+        Set<Table> tables = new HashSet<Table>();
         for (HBaseCellId cell : writeSet) {
             tables.add(cell.getTable());
         }
