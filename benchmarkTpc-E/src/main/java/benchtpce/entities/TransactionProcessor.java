@@ -24,11 +24,12 @@ public class TransactionProcessor implements Runnable{
 
     private static final Logger LOG = LoggerFactory.getLogger(TransactionProcessor.class);
 
-    public TransactionProcessor(TpcTransaction tx, TransactionManager tm, ThreadCounter counter) {
+    public TransactionProcessor(Connection conn, TpcTransaction tx, TransactionManager tm, ThreadCounter counter) {
         this.tpcTransaction = tx;
         this.tm = tm;
         this.counter = counter;
         this.transactionMode = true;
+        this.conn = conn;
     }
 
     public TransactionProcessor(TpcTransaction tpcTransaction, Connection conn, ThreadCounter counter) {
@@ -78,7 +79,7 @@ public class TransactionProcessor implements Runnable{
             }
 
             if(transactionMode) {
-                tpcTransaction.omidTransaction(tx);
+                tpcTransaction.omidTransaction(conn, tx);
                 workTime = System.currentTimeMillis()-start-beginTime-sleepTime;
                 this.tpcTransaction.setWorkTime(workTime);
                 LOG.debug("Tx:{} - work done in {} ms",tx.getTransactionId(), workTime);

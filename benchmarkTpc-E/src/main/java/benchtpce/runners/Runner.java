@@ -60,6 +60,8 @@ public class Runner implements Runnable{
 
     public void runOmidTransactions(){
         try {
+            Configuration config = HBaseConfiguration.create();
+            conn = ConnectionFactory.createConnection(config);
             tm = HBaseTransactionManager.newInstance();
         } catch (Exception e) {
             logger.error("fail load omidClientConfiguration: {}", e.getMessage());
@@ -119,7 +121,7 @@ public class Runner implements Runnable{
             tpcTx.setExpectedStartRun(diff + startTimeEntry);
 
             if(tpcConfig.isTransactions())
-                txProcessor = new TransactionProcessor(tpcTx, tm, counter);
+                txProcessor = new TransactionProcessor(conn, tpcTx, tm, counter);
             else
                 txProcessor = new TransactionProcessor(tpcTx, conn,  counter);
 
