@@ -49,7 +49,7 @@ import java.util.NavigableSet;
 
 /**
  * Provides transactional methods for accessing and modifying a given snapshot of data identified by an opaque {@link
- * Transaction} object. It mimics the behavior in {@link org.apache.hadoop.hbase.client.HTableInterface}
+ * Transaction} object. It mimics the behavior in {@link org.apache.hadoop.hbase.client.Table}
  */
 public class TTable implements Closeable {
 
