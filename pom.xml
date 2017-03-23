@@ -91,6 +91,7 @@
         <module>hbase-tools</module>
         <module>examples</module>
         <module>packaging</module>
+        <module>benchmark</module>
     </modules>
 
     <pluginRepositories>

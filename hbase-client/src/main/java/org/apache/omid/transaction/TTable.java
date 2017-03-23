@@ -70,7 +70,11 @@ public class TTable implements Closeable {
 
 
     public TTable(Connection connection, TableName tableName) throws IOException {
-        this(connection.getTable(tableName));
+        this(connection.getTable(tableName), connection);
+    }
+
+    public TTable(Connection connection, String tableName) throws IOException {
+        this(connection , TableName.valueOf(tableName));
     }
 
     public TTable(Configuration conf, String tableName) throws IOException {
@@ -84,9 +88,9 @@ public class TTable implements Closeable {
 
 
 
-    public TTable(Table table) throws IOException {
+    public TTable(Table table, Connection connection) throws IOException {
         this.table = table;
-        Connection connection = ConnectionFactory.createConnection(table.getConfiguration());
+        //Connection connection = ConnectionFactory.createConnection(table.getConfiguration());
         healerTable = connection.getTable(table.getName());
     }
 
