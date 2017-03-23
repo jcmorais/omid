@@ -91,6 +91,7 @@
         <module>hbase-tools</module>
         <module>examples</module>
         <module>packaging</module>
+        <module>benchmarkTpc-E</module>
     </modules>
 
     <pluginRepositories>
@@ -318,7 +319,6 @@
                     <executions>
                         <execution>
                             <goals>
-                                <goal>check</goal>
                             </goals>
                         </execution>
                     </executions>
@@ -421,7 +421,6 @@
                         <id>check-license</id>
                         <phase>verify</phase>
                         <goals>
-                            <goal>check</goal>
                         </goals>
                     </execution>
                 </executions>

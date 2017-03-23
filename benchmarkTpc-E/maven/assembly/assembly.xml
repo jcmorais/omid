@@ -1,0 +1,78 @@
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
+
+    <id>bin</id>
+
+    <formats>
+        <format>tar.gz</format>
+    </formats>
+
+    <includeBaseDirectory>true</includeBaseDirectory>
+
+    <moduleSets>
+
+        <moduleSet>
+            <!-- Enable access to all projects in the current multimodule build! -->
+            <!--<useAllReactorProjects>true</useAllReactorProjects>-->
+            <binaries>
+                <outputDirectory>/lib</outputDirectory>
+                <unpack>false</unpack>
+            </binaries>
+        </moduleSet>
+
+    </moduleSets>
+
+    <fileSets>
+        <fileSet>
+            <includes>
+                <include>${basedir}/*.sh</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>${basedir}/src/main/resources/files/serialized</directory>
+            <outputDirectory>/conf/files/serialized</outputDirectory>
+            <includes>
+                <include>*</include>
+            </includes>
+        </fileSet>
+    </fileSets>
+
+    <files>
+        <file>
+            <source>target/${project.artifactId}-${project.version}.jar</source>
+            <outputDirectory>/</outputDirectory>
+            <destName>bench.jar</destName>
+        </file>
+        <file>
+            <source>${basedir}/src/main/resources/log4j.properties</source>
+            <outputDirectory>/conf</outputDirectory>
+            <destName>log4j.properties</destName>
+        </file>
+        <file>
+            <source>${basedir}/src/main/resources/hbase-omid-client-config.yml</source>
+            <outputDirectory>/conf</outputDirectory>
+            <destName>hbase-omid-client-config.yml</destName>
+        </file>
+        <file>
+            <source>${basedir}/src/main/resources/hbase-site.xml</source>
+            <outputDirectory>/conf</outputDirectory>
+            <destName>hbase-site.xml</destName>
+        </file>
+        <file>
+            <source>${basedir}/src/main/resources/tpc-config.yml</source>
+            <outputDirectory>/conf</outputDirectory>
+            <destName>tpc-config.yml</destName>
+        </file>
+    </files>
+
+    <dependencySets>
+        <dependencySet>
+            <outputDirectory>/lib</outputDirectory>
+            <unpack>false</unpack>
+            <scope>runtime</scope>
+            <useProjectArtifact>false</useProjectArtifact>
+        </dependencySet>
+    </dependencySets>
+
+</assembly>
